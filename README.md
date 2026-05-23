@@ -6,7 +6,7 @@ A bookmarklet that lets you visually select elements on any web page, add instru
 
 ## Install
 
-1. Visit the **[install page](https://oil-oil.github.io/selector/)**
+1. Visit the **[install page](https://idonecc.github.io/selector/)**
 2. Drag the **Selector** button to your bookmarks bar (one-time)
 3. Done
 
@@ -56,11 +56,13 @@ The bookmarklet injects `editor.css` + `editor.js` into the current page. Everyt
 ## Development
 
 ```bash
-git clone https://github.com/oil-oil/selector.git
+git clone https://github.com/idonecc/selector.git
 cd selector
 # Edit assets/editor.js and assets/editor.css
 # Push to main — GitHub Pages auto-deploys
 ```
+
+Fork of [oil-oil/selector](https://github.com/oil-oil/selector).
 
 ## License
 
