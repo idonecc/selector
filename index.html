@@ -3,47 +3,52 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Selector — Visual Element Picker</title>
+<title>Selector 选择器 — Visual Element Picker</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='6' fill='%23111'/></svg>">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{
-    background:#0a0a0a;color:#d4d4d4;
+    background:#fafafa;color:#1a1a1a;
     font-family:'SF Mono',Menlo,Monaco,'Cascadia Code',monospace;
     min-height:100vh;display:flex;align-items:center;justify-content:center;
   }
-  .wrap{max-width:460px;width:100%;padding:48px 32px}
-  .dot{width:6px;height:6px;background:#4ade80;border-radius:50%;
+  .wrap{max-width:480px;width:100%;padding:48px 32px}
+  .dot{width:6px;height:6px;background:#22c55e;border-radius:50%;
        display:inline-block;margin-right:8px;
        animation:pulse 2.4s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-  .status{display:flex;align-items:center;margin-bottom:32px;font-size:11px;color:#404040;letter-spacing:.1em;text-transform:uppercase}
-  h1{font-size:20px;font-weight:500;color:#fff;margin-bottom:6px;letter-spacing:-.02em}
-  .sub{font-size:12px;color:#505050;margin-bottom:44px;line-height:1.6}
+  .status{display:flex;align-items:center;margin-bottom:28px;font-size:11px;color:#888;letter-spacing:.1em;text-transform:uppercase}
+  h1{font-size:22px;font-weight:600;color:#0a0a0a;margin-bottom:4px;letter-spacing:-.02em}
+  .h1-cn{font-size:13px;color:#888;margin-bottom:18px;letter-spacing:.02em}
+  .sub{font-size:13px;color:#444;margin-bottom:6px;line-height:1.6}
+  .sub-cn{font-size:12px;color:#999;margin-bottom:44px;line-height:1.6}
   .steps{display:flex;flex-direction:column;gap:32px}
   .step{display:flex;gap:20px}
-  .num{font-size:11px;color:#444;width:16px;flex-shrink:0;padding-top:1px}
+  .num{font-size:11px;color:#aaa;width:16px;flex-shrink:0;padding-top:2px}
   .step-body{flex:1}
-  .step-title{font-size:12px;color:#888;margin-bottom:10px}
+  .step-title{font-size:13px;color:#222;margin-bottom:2px;font-weight:500}
+  .step-title-cn{font-size:11px;color:#999;margin-bottom:12px}
   .bm{
     display:inline-block;padding:10px 22px;
-    background:#fff;color:#0a0a0a;
+    background:#0a0a0a;color:#fafafa;
     border-radius:6px;text-decoration:none;
     font-size:13px;font-weight:600;letter-spacing:.02em;
     cursor:grab;transition:background 120ms;
+    box-shadow:0 1px 2px rgba(0,0,0,.08);
   }
-  .bm:hover{background:#e8e8e8}
+  .bm:hover{background:#222}
   .bm:active{cursor:grabbing}
-  .bm.loading{background:#333;color:#666;cursor:wait}
-  .note{font-size:11px;color:#333;margin-top:8px;line-height:1.6}
-  .err{color:#c06000;font-size:11px;margin-top:12px;display:none}
-  code{background:#141414;color:#555;padding:1px 5px;border-radius:3px;font-size:10px}
-  .kbd{display:inline-block;background:#1a1a1a;border:1px solid #2a2a2a;color:#666;
+  .bm.loading{background:#e5e5e5;color:#aaa;cursor:wait;box-shadow:none}
+  .note{font-size:11px;color:#777;margin-top:10px;line-height:1.7}
+  .note-cn{font-size:11px;color:#aaa;line-height:1.7}
+  .err{color:#c2410c;font-size:11px;margin-top:12px;display:none}
+  code{background:#efefef;color:#555;padding:1px 5px;border-radius:3px;font-size:10px}
+  .kbd{display:inline-block;background:#f0f0f0;border:1px solid #ddd;color:#555;
        padding:1px 5px;border-radius:3px;font-size:10px;font-family:inherit}
-  .footer{margin-top:48px;padding-top:24px;border-top:1px solid #1a1a1a;
-           font-size:10px;color:#2a2a2a}
-  .footer a{color:#444;text-decoration:none}
-  .footer a:hover{color:#888}
+  .footer{margin-top:48px;padding-top:24px;border-top:1px solid #ececec;
+           font-size:10px;color:#bbb}
+  .footer a{color:#888;text-decoration:none;margin-right:14px}
+  .footer a:hover{color:#222}
 </style>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -81,39 +86,50 @@ document.addEventListener("DOMContentLoaded", function () {
 </head>
 <body>
 <div class="wrap">
-  <div class="status"><span class="dot"></span>install</div>
+  <div class="status"><span class="dot"></span>install · 安装</div>
   <h1>Selector</h1>
+  <div class="h1-cn">选择器</div>
   <p class="sub">Point at any element. Tell your AI what to change.</p>
+  <p class="sub-cn">指向任何元素。告诉你的 AI 该改什么。</p>
   <div class="steps">
     <div class="step">
       <span class="num">01</span>
       <div class="step-body">
         <div class="step-title">Drag to bookmarks bar</div>
+        <div class="step-title-cn">拖到书签栏</div>
         <a class="bm loading" id="bm-link" href="#">Selector</a>
-        <p class="note">one-time setup</p>
-        <p class="err" id="bm-err">Failed to load assets. Make sure this page is served over HTTP(S).</p>
+        <p class="note">one-time setup &middot; <span class="note-cn">一次性设置</span></p>
+        <p class="err" id="bm-err">Failed to load assets. Make sure this page is served over HTTP(S).<br>资源加载失败，请通过 HTTP(S) 访问本页。</p>
       </div>
     </div>
     <div class="step">
       <span class="num">02</span>
       <div class="step-body">
         <div class="step-title">Click the bookmark on any page</div>
+        <div class="step-title-cn">在任意网页点击书签</div>
         <p class="note">Works everywhere &mdash; <code>localhost</code> &middot; React &middot; Next.js &middot; production URLs</p>
+        <p class="note-cn">支持任意站点 —— 本地开发 · React · Next.js · 生产环境</p>
       </div>
     </div>
     <div class="step">
       <span class="num">03</span>
       <div class="step-body">
         <div class="step-title">Select &rarr; Copy &rarr; Paste into your AI</div>
+        <div class="step-title-cn">选元素 → 复制 → 粘到 AI 里</div>
         <p class="note">
           <span class="kbd">&#8984;C</span> copies a structured prompt with element metadata<br>
           Paste into Claude Code &middot; Codex &middot; Cursor &middot; any AI assistant
+        </p>
+        <p class="note-cn">
+          <span class="kbd">&#8984;C</span> 复制带元素元数据的结构化提示词<br>
+          粘到 Claude Code · Codex · Cursor · 任意 AI 助手
         </p>
       </div>
     </div>
   </div>
   <div class="footer">
-    <a href="https://github.com/oil-oil/selector" target="_blank">GitHub</a>
+    <a href="https://github.com/idonecc/selector" target="_blank">GitHub</a>
+    <a href="https://github.com/oil-oil/selector" target="_blank">Upstream</a>
   </div>
 </div>
 </body>
