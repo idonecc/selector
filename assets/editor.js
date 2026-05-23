@@ -41,14 +41,25 @@
     on(document, "click", handleClick, true);
     on(document, "mousemove", handleMouseMove, true);
     on(document, "mouseup", handleMouseUp, true);
-    on(document, "mouseleave", () => { showHover(null); cancelDrag(); }, true);
+    on(
+      document,
+      "mouseleave",
+      () => {
+        showHover(null);
+        cancelDrag();
+      },
+      true,
+    );
     on(document, "keydown", handleKeyDown, true);
 
     let repositionRaf = false;
     const scheduleReposition = () => {
       if (!repositionRaf) {
         repositionRaf = true;
-        requestAnimationFrame(() => { positionAllOverlays(); repositionRaf = false; });
+        requestAnimationFrame(() => {
+          positionAllOverlays();
+          repositionRaf = false;
+        });
       }
     };
     on(window, "scroll", scheduleReposition, true);
@@ -72,7 +83,8 @@
     let node;
     while ((node = walker.nextNode())) {
       if (isEditorElement(node)) continue;
-      if (!node.hasAttribute(AI_ID)) node.setAttribute(AI_ID, `el-${aiIdCounter++}`);
+      if (!node.hasAttribute(AI_ID))
+        node.setAttribute(AI_ID, `el-${aiIdCounter++}`);
     }
   }
 
@@ -88,8 +100,14 @@
   function resolveTarget(el) {
     let cur = el;
     while (cur && cur !== document.body && cur !== document.documentElement) {
-      if (isEditorElement(cur)) { cur = cur.parentElement; continue; }
-      if (!isVisible(cur)) { cur = cur.parentElement; continue; }
+      if (isEditorElement(cur)) {
+        cur = cur.parentElement;
+        continue;
+      }
+      if (!isVisible(cur)) {
+        cur = cur.parentElement;
+        continue;
+      }
       if (isMeaningful(cur)) return cur;
       cur = cur.parentElement;
     }
@@ -100,12 +118,19 @@
     const r = el.getBoundingClientRect();
     if (r.width < 2 && r.height < 2) return false;
     const s = getComputedStyle(el);
-    return s.display !== "none" && s.visibility !== "hidden" && s.opacity !== "0";
+    return (
+      s.display !== "none" && s.visibility !== "hidden" && s.opacity !== "0"
+    );
   }
 
   function isMeaningful(el) {
     if (hasDirectText(el)) return true;
-    if (el.querySelector("img,video,canvas,svg,button,a,input,select,textarea,iframe")) return true;
+    if (
+      el.querySelector(
+        "img,video,canvas,svg,button,a,input,select,textarea,iframe",
+      )
+    )
+      return true;
     if (el.children.length > 1) return true;
     return false;
   }
@@ -130,10 +155,10 @@
       return;
     }
     const r = el.getBoundingClientRect();
-    hoverBox.style.top = (r.top - 1) + "px";
-    hoverBox.style.left = (r.left - 1) + "px";
-    hoverBox.style.width = (r.width + 2) + "px";
-    hoverBox.style.height = (r.height + 2) + "px";
+    hoverBox.style.top = r.top - 1 + "px";
+    hoverBox.style.left = r.left - 1 + "px";
+    hoverBox.style.width = r.width + 2 + "px";
+    hoverBox.style.height = r.height + 2 + "px";
     hoverBox.style.opacity = "1";
   }
 
@@ -167,7 +192,10 @@
     lastMoveTarget = resolveTarget(e.target);
     if (!rafPending) {
       rafPending = true;
-      requestAnimationFrame(() => { showHover(lastMoveTarget); rafPending = false; });
+      requestAnimationFrame(() => {
+        showHover(lastMoveTarget);
+        rafPending = false;
+      });
     }
   }
 
@@ -209,7 +237,9 @@
     });
 
     updateTags();
-    setTimeout(() => { wasJustDragging = false; }, 0);
+    setTimeout(() => {
+      wasJustDragging = false;
+    }, 0);
   }
 
   function cancelDrag() {
@@ -218,7 +248,12 @@
   }
 
   function rectsIntersect(a, b) {
-    return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+    return !(
+      a.right < b.left ||
+      a.left > b.right ||
+      a.bottom < b.top ||
+      a.top > b.bottom
+    );
   }
 
   function handleClick(e) {
@@ -265,8 +300,9 @@
 
     const annotateBtn = document.createElement("button");
     annotateBtn.className = `${NS}-root ${NS}-annotate-btn`;
-    annotateBtn.title = "Add instruction";
-    annotateBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+    annotateBtn.title = "添加说明";
+    annotateBtn.innerHTML =
+      '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
     annotateBtn.onclick = (e) => {
       e.stopPropagation();
       e.preventDefault();
@@ -287,15 +323,15 @@
     const r = el.getBoundingClientRect();
     const pad = 2;
 
-    ov.box.style.top = (r.top - pad) + "px";
-    ov.box.style.left = (r.left - pad) + "px";
-    ov.box.style.width = (r.width + pad * 2) + "px";
-    ov.box.style.height = (r.height + pad * 2) + "px";
+    ov.box.style.top = r.top - pad + "px";
+    ov.box.style.left = r.left - pad + "px";
+    ov.box.style.width = r.width + pad * 2 + "px";
+    ov.box.style.height = r.height + pad * 2 + "px";
 
     const cs = 6;
     const pos = [
-      { top: r.top - pad - cs / 2,    left: r.left - pad - cs / 2 },
-      { top: r.top - pad - cs / 2,    left: r.right + pad - cs / 2 },
+      { top: r.top - pad - cs / 2, left: r.left - pad - cs / 2 },
+      { top: r.top - pad - cs / 2, left: r.right + pad - cs / 2 },
       { top: r.bottom + pad - cs / 2, left: r.left - pad - cs / 2 },
       { top: r.bottom + pad - cs / 2, left: r.right + pad - cs / 2 },
     ];
@@ -304,11 +340,11 @@
       ov.corners[i].style.left = pos[i].left + "px";
     }
 
-    ov.label.style.top = (r.top - pad - 20) + "px";
-    ov.label.style.left = (r.left - pad) + "px";
+    ov.label.style.top = r.top - pad - 20 + "px";
+    ov.label.style.left = r.left - pad + "px";
 
-    ov.annotateBtn.style.top = (r.top - pad - 22) + "px";
-    ov.annotateBtn.style.left = (r.right + pad + 4) + "px";
+    ov.annotateBtn.style.top = r.top - pad - 22 + "px";
+    ov.annotateBtn.style.left = r.right + pad + 4 + "px";
 
     if (annotations.has(aiId)) {
       ov.annotateBtn.classList.add(`${NS}-has-note`);
@@ -325,7 +361,7 @@
     const ov = selOverlays.get(aiId);
     if (!ov) return;
     ov.box.remove();
-    ov.corners.forEach(c => c.remove());
+    ov.corners.forEach((c) => c.remove());
     ov.label.remove();
     ov.annotateBtn.remove();
     selOverlays.delete(aiId);
@@ -388,7 +424,11 @@
   function navigateToParent() {
     if (selectedElements.length !== 1) return;
     let parent = selectedElements[0].parentElement;
-    while (parent && parent !== document.body && parent !== document.documentElement) {
+    while (
+      parent &&
+      parent !== document.body &&
+      parent !== document.documentElement
+    ) {
       if (!isEditorElement(parent) && isVisible(parent)) {
         pushHistory();
         clearSelection();
@@ -419,7 +459,7 @@
     const parent = el.parentElement;
     if (!parent) return;
     const siblings = Array.from(parent.children).filter(
-      c => !isEditorElement(c) && isVisible(c) && isMeaningful(c)
+      (c) => !isEditorElement(c) && isVisible(c) && isMeaningful(c),
     );
     const idx = siblings.indexOf(el);
     const next = siblings[idx + dir];
@@ -431,17 +471,30 @@
     }
   }
 
-
   function handleKeyDown(e) {
-    if (isEditorElement(e.target) && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+    if (
+      isEditorElement(e.target) &&
+      (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")
+    )
+      return;
     const mod = e.metaKey || e.ctrlKey;
 
     if (e.key === "Escape") {
-      if (activePopover) { removeAnnotationPopover(); }
-      else { pushHistory(); clearSelection(); updateTags(); }
+      if (activePopover) {
+        removeAnnotationPopover();
+      } else {
+        pushHistory();
+        clearSelection();
+        updateTags();
+      }
       return;
     }
-    if (mod && e.key.toLowerCase() === "c" && !e.shiftKey && selectedElements.length > 0) {
+    if (
+      mod &&
+      e.key.toLowerCase() === "c" &&
+      !e.shiftKey &&
+      selectedElements.length > 0
+    ) {
       e.preventDefault();
       copyPrompt();
       return;
@@ -483,7 +536,7 @@
     const dot = chatPanel.querySelector(`.${NS}-status-dot`);
     const label = chatPanel.querySelector(`.${NS}-status-label`);
     if (dot) dot.style.background = paused ? "#888" : "#4ade80";
-    if (label) label.textContent = paused ? "Paused" : "Selecting";
+    if (label) label.textContent = paused ? "已暂停" : "选择中";
   }
 
   // ── Annotation popover ─────────────────────────────────────
@@ -497,7 +550,8 @@
     const textarea = document.createElement("textarea");
     textarea.className = `${NS}-annotate-input`;
     textarea.value = annotations.get(aiId) || "";
-    textarea.placeholder = "Instruction for this element\u2026";
+    textarea.placeholder =
+      "\u4e3a\u6b64\u5143\u7d20\u6dfb\u52a0\u8bf4\u660e\u2026";
     textarea.rows = 2;
 
     const actions = document.createElement("div");
@@ -505,11 +559,11 @@
 
     const clearNoteBtn = document.createElement("button");
     clearNoteBtn.className = `${NS}-annotate-clear`;
-    clearNoteBtn.textContent = "Clear";
+    clearNoteBtn.textContent = "清除";
 
     const doneBtn = document.createElement("button");
     doneBtn.className = `${NS}-annotate-done`;
-    doneBtn.textContent = "Done";
+    doneBtn.textContent = "完成";
 
     const save = () => {
       const val = textarea.value.trim();
@@ -519,7 +573,10 @@
       positionSelOverlay(el);
     };
 
-    doneBtn.onclick = (e) => { e.stopPropagation(); save(); };
+    doneBtn.onclick = (e) => {
+      e.stopPropagation();
+      save();
+    };
     clearNoteBtn.onclick = (e) => {
       e.stopPropagation();
       annotations.delete(aiId);
@@ -528,7 +585,10 @@
     };
 
     textarea.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); save(); }
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        save();
+      }
       e.stopPropagation();
     });
     textarea.addEventListener("click", (e) => e.stopPropagation());
@@ -539,7 +599,7 @@
     popover.appendChild(actions);
 
     const r = btn.getBoundingClientRect();
-    popover.style.top = (r.bottom + 6) + "px";
+    popover.style.top = r.bottom + 6 + "px";
     popover.style.right = Math.max(8, window.innerWidth - r.right) + "px";
 
     document.body.appendChild(popover);
@@ -562,15 +622,15 @@
       <div class="${NS}-drag-handle">
         <span class="${NS}-drag-title">
           <span class="${NS}-status-dot"></span>
-          <span class="${NS}-status-label">Selecting</span>
+          <span class="${NS}-status-label">\u9009\u62e9\u4e2d</span>
         </span>
         <div class="${NS}-panel-actions">
-          <button class="${NS}-panel-btn" data-action="minimize" title="Minimize">
+          <button class="${NS}-panel-btn" data-action="minimize" title="\u6700\u5c0f\u5316">
             <svg width="10" height="2" viewBox="0 0 10 2" fill="none">
               <line x1="0" y1="1" x2="10" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
           </button>
-          <button class="${NS}-panel-btn" data-action="close" title="Close">
+          <button class="${NS}-panel-btn" data-action="close" title="\u5173\u95ed">
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
               <line x1="1" y1="1" x2="9" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               <line x1="9" y1="1" x2="1" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -581,45 +641,46 @@
       <div class="${NS}-panel-body">
         <div class="${NS}-chat-tags ${NS}-hidden"></div>
         <div class="${NS}-shortcuts">
-          <span><kbd>Click</kbd> Select</span>
-          <span><kbd>Shift</kbd> Multi</span>
-          <span><kbd>\u2190\u2191\u2192\u2193</kbd> Navigate</span>
-          <span><kbd>Space</kbd> Pause</span>
-          <span><kbd>\u2318C</kbd> Copy</span>
-          <span><kbd>\u2318Z</kbd> Undo</span>
-          <span><kbd>Esc</kbd> Clear</span>
+          <span><kbd>Click</kbd> \u9009\u62e9</span>
+          <span><kbd>Shift</kbd> \u591a\u9009</span>
+          <span><kbd>\u2190\u2191\u2192\u2193</kbd> \u79fb\u52a8</span>
+          <span><kbd>Space</kbd> \u6682\u505c</span>
+          <span><kbd>\u2318C</kbd> \u590d\u5236</span>
+          <span><kbd>\u2318Z</kbd> \u64a4\u9500</span>
+          <span><kbd>Esc</kbd> \u6e05\u7a7a</span>
         </div>
-        <button class="${NS}-copy-btn" disabled>Copy Prompt</button>
+        <button class="${NS}-copy-btn" disabled>\u590d\u5236\u63d0\u793a\u8bcd</button>
       </div>
     `;
     document.body.appendChild(chatPanel);
 
     chatPanel.querySelector(`.${NS}-copy-btn`).onclick = () => copyPrompt();
 
-    chatPanel.querySelector('[data-action="minimize"]').onclick = toggleMinimize;
+    chatPanel.querySelector('[data-action="minimize"]').onclick =
+      toggleMinimize;
     chatPanel.querySelector('[data-action="close"]').onclick = destroy;
 
     makeDraggable(chatPanel, chatPanel.querySelector(`.${NS}-drag-handle`));
   }
 
   const ICON_MINIMIZE = `<svg width="10" height="2" viewBox="0 0 10 2" fill="none"><line x1="0" y1="1" x2="10" y2="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-  const ICON_EXPAND   = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 7L5 3L9 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const ICON_EXPAND = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1 7L5 3L9 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
   function toggleMinimize() {
     minimized = !minimized;
     const body = chatPanel.querySelector(`.${NS}-panel-body`);
-    const btn  = chatPanel.querySelector('[data-action="minimize"]');
+    const btn = chatPanel.querySelector('[data-action="minimize"]');
     if (minimized) {
       body.style.display = "none";
       chatPanel.classList.add(`${NS}-minimized`);
       showHover(null);
       btn.innerHTML = ICON_EXPAND;
-      btn.title = "Restore";
+      btn.title = "恢复";
     } else {
       body.style.display = "";
       chatPanel.classList.remove(`${NS}-minimized`);
       btn.innerHTML = ICON_MINIMIZE;
-      btn.title = "Minimize";
+      btn.title = "最小化";
     }
   }
 
@@ -629,11 +690,14 @@
       if (e.target.closest(`.${NS}-panel-btn`)) return;
       e.preventDefault();
       const r = panel.getBoundingClientRect();
-      sx = e.clientX; sy = e.clientY; sl = r.left; st = r.top;
+      sx = e.clientX;
+      sy = e.clientY;
+      sl = r.left;
+      st = r.top;
       const move = (e) => {
-        panel.style.left   = sl + e.clientX - sx + "px";
-        panel.style.top    = st + e.clientY - sy + "px";
-        panel.style.right  = "auto";
+        panel.style.left = sl + e.clientX - sx + "px";
+        panel.style.top = st + e.clientY - sy + "px";
+        panel.style.right = "auto";
         panel.style.bottom = "auto";
       };
       const up = () => {
@@ -674,24 +738,32 @@
         const tag = document.createElement("span");
         tag.className = `${NS}-tag`;
         const hasNote = annotations.has(aiId);
-        tag.innerHTML = `<span class="${NS}-tag-num">${i + 1}</span><span class="${NS}-tag-label">${elementLabel(el)}${hasNote ? ' \u270e' : ''}</span><button class="${NS}-tag-x" data-aiid="${aiId}" title="Remove">\u00d7</button>`;
+        tag.innerHTML = `<span class="${NS}-tag-num">${i + 1}</span><span class="${NS}-tag-label">${elementLabel(el)}${hasNote ? " \u270e" : ""}</span><button class="${NS}-tag-x" data-aiid="${aiId}" title="移除">\u00d7</button>`;
         container.appendChild(tag);
       }
 
       container.querySelectorAll(`.${NS}-tag-x`).forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const el = byAiId(btn.dataset.aiid);
-          if (el) removeSelection(el);
-          updateTags();
-        }, true);
+        btn.addEventListener(
+          "click",
+          (e) => {
+            e.stopPropagation();
+            const el = byAiId(btn.dataset.aiid);
+            if (el) removeSelection(el);
+            updateTags();
+          },
+          true,
+        );
       });
 
       const clearAllBtn = document.createElement("button");
       clearAllBtn.className = `${NS}-tags-action`;
-      clearAllBtn.title = "Clear all";
-      clearAllBtn.innerHTML = `<svg width="8" height="8" viewBox="0 0 8 8" fill="none"><line x1="1" y1="1" x2="7" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="1" x2="1" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Clear`;
-      clearAllBtn.onclick = (e) => { e.stopPropagation(); clearSelection(); updateTags(); };
+      clearAllBtn.title = "全部清空";
+      clearAllBtn.innerHTML = `<svg width="8" height="8" viewBox="0 0 8 8" fill="none"><line x1="1" y1="1" x2="7" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="1" x2="1" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> 清空`;
+      clearAllBtn.onclick = (e) => {
+        e.stopPropagation();
+        clearSelection();
+        updateTags();
+      };
       container.appendChild(clearAllBtn);
     } else {
       container.classList.add(`${NS}-hidden`);
@@ -708,7 +780,7 @@
     btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> ${msg}`;
     copyTimer = setTimeout(() => {
       btn.classList.remove(`${NS}-copy-done`);
-      btn.textContent = "Copy Prompt";
+      btn.textContent = "复制提示词";
       copyTimer = null;
     }, 2000);
   }
@@ -717,7 +789,7 @@
     const text = buildPromptText();
     if (!text) return;
     writeToClipboard(text);
-    showCopyFeedback("Copied");
+    showCopyFeedback("已复制");
   }
 
   // ── Prompt building ────────────────────────────────────────
@@ -728,12 +800,14 @@
     selectedElements.forEach((el, i) => {
       const ctx = buildElementContext(el, i + 1);
       lines.push(`${i + 1}. ${elementLabel(el)} <${ctx.tag}>`);
-      if (ctx.selector)  lines.push(`   selector: ${ctx.selector}`);
-      if (ctx.source)    lines.push(`   source: ${ctx.source}`);
-      if (ctx.react)     lines.push(`   react: ${ctx.react}`);
-      if (ctx.text)      lines.push(`   text: "${ctx.text}"`);
-      Object.entries(ctx.dataAttrs).forEach(([k, v]) => lines.push(`   ${k}: ${v}`));
-      if (ctx.outerHTML)  lines.push(`   html: ${ctx.outerHTML}`);
+      if (ctx.selector) lines.push(`   selector: ${ctx.selector}`);
+      if (ctx.source) lines.push(`   source: ${ctx.source}`);
+      if (ctx.react) lines.push(`   react: ${ctx.react}`);
+      if (ctx.text) lines.push(`   text: "${ctx.text}"`);
+      Object.entries(ctx.dataAttrs).forEach(([k, v]) =>
+        lines.push(`   ${k}: ${v}`),
+      );
+      if (ctx.outerHTML) lines.push(`   html: ${ctx.outerHTML}`);
 
       const aiId = el.getAttribute(AI_ID);
       const note = annotations.get(aiId);
@@ -755,19 +829,37 @@
     ta.value = text;
     ta.style.cssText = "position:fixed;opacity:0;top:0;left:0";
     document.body.appendChild(ta);
-    ta.focus(); ta.select();
-    try { document.execCommand("copy"); } catch (_) {}
+    ta.focus();
+    ta.select();
+    try {
+      document.execCommand("copy");
+    } catch (_) {}
     ta.remove();
   }
 
   // ── React debug info (dev mode only) ──────────────────────
   const SKIP_REACT = new Set([
-    "ClientPageRoot","LinkComponent","ServerComponent","AppRouter",
-    "Router","HotReload","ReactDevOverlay","InnerLayoutRouter",
-    "OuterLayoutRouter","RedirectBoundary","NotFoundBoundary",
-    "ErrorBoundary","LoadingBoundary","TemplateContext",
-    "ScrollAndFocusHandler","RenderFromTemplateContext",
-    "PathnameContextProviderAdapter","Hot","Inner","Forward","Root",
+    "ClientPageRoot",
+    "LinkComponent",
+    "ServerComponent",
+    "AppRouter",
+    "Router",
+    "HotReload",
+    "ReactDevOverlay",
+    "InnerLayoutRouter",
+    "OuterLayoutRouter",
+    "RedirectBoundary",
+    "NotFoundBoundary",
+    "ErrorBoundary",
+    "LoadingBoundary",
+    "TemplateContext",
+    "ScrollAndFocusHandler",
+    "RenderFromTemplateContext",
+    "PathnameContextProviderAdapter",
+    "Hot",
+    "Inner",
+    "Forward",
+    "Root",
   ]);
 
   function isUserComponent(name) {
@@ -780,8 +872,10 @@
 
   function getReactDebug(el) {
     try {
-      const fiberKey = Object.keys(el).find(k =>
-        k.startsWith("__reactFiber") || k.startsWith("__reactInternalInstance")
+      const fiberKey = Object.keys(el).find(
+        (k) =>
+          k.startsWith("__reactFiber") ||
+          k.startsWith("__reactInternalInstance"),
       );
       if (!fiberKey) return {};
 
@@ -811,7 +905,8 @@
         }
         walker = walker.return;
       }
-      if (components.length) result.react = components.reverse().join(" \u203a ");
+      if (components.length)
+        result.react = components.reverse().join(" \u203a ");
 
       return result;
     } catch (_) {
@@ -846,12 +941,21 @@
     if (el.id) return `#${el.id}`;
     const parts = [];
     let node = el;
-    while (node && node !== document.body && node !== document.documentElement) {
+    while (
+      node &&
+      node !== document.body &&
+      node !== document.documentElement
+    ) {
       let seg = node.tagName.toLowerCase();
-      if (node.id) { parts.unshift(`#${node.id}`); break; }
+      if (node.id) {
+        parts.unshift(`#${node.id}`);
+        break;
+      }
       const p = node.parentElement;
       if (p) {
-        const s = Array.from(p.children).filter(c => c.tagName === node.tagName);
+        const s = Array.from(p.children).filter(
+          (c) => c.tagName === node.tagName,
+        );
         if (s.length > 1) seg += `:nth-of-type(${s.indexOf(node) + 1})`;
       }
       parts.unshift(seg);
@@ -867,6 +971,7 @@
   }
 
   // ── Boot ───────────────────────────────────────────────────
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", init);
   else init();
 })();
